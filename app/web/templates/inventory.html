@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}Stock - DealFinder{% endblock %}{% block content %}
+<div class="flex items-center justify-between"><h1 class="text-lg font-bold">Stock ({{ total }})</h1><a href="/inventory/export.csv" class="btn btn-grey">Export cross-list CSV</a></div>
+<div class="kanban">
+{% for status, items in columns.items() %}
+  <div>
+    <div class="text-xs font-semibold uppercase text-gray-500 mb-1">{{ status.replace('_',' ') }} <span class="pill pill-grey">{{ items|length }}</span></div>
+    <div class="space-y-2">
+    {% for i in items %}
+      <a href="/inventory/{{ i.id }}" class="card block {{ 'border-2 border-red-300' if i.is_overdue }}">
+        <div class="text-xs text-gray-500">{{ i.sku }}</div>
+        <div class="text-sm font-medium leading-tight">{{ i.platform }} {{ i.title[:40] }}</div>
+        <div class="text-xs text-gray-600 mt-1">cost {{ i.cost_basis|money }} · exp {{ i.expected_sale_price|money }}{% if i.status == 'listed' %} · by {{ i.expected_sell_by|dt('%d %b') }}{% endif %}</div>
+        {% if i.is_overdue %}<span class="pill pill-red mt-1">overdue - mark down</span>{% endif %}
+      </a>
+    {% endfor %}
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

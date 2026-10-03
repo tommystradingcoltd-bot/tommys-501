@@ -1,0 +1,27 @@
+<div class="card flex flex-col gap-1">
+  <div class="flex justify-between items-start gap-2">
+    <a href="/deals/{{ d.id }}" class="font-semibold leading-tight">{{ d.item.platform }} {{ d.item.title if d.item.title != 'bundle' else d.raw_listing.title[:60] }}
+      {% if d.item.completeness and d.item.title != 'bundle' %}<span class="text-gray-500 font-normal">({{ d.item.completeness }})</span>{% endif %}</a>
+    <span class="pill {{ 'pill-green' if d.score >= 60 else 'pill-blue' if d.score >= 30 else 'pill-grey' }}">{{ d.score|round|int }}</span>
+  </div>
+  <div class="text-sm flex flex-wrap gap-x-3 gap-y-0.5">
+    <span>{{ d.raw_listing.source.name }}{% if d.raw_listing.listing_type == 'auction' %} (auction){% endif %}: <b>{{ d.buy_price|money }}</b></span>
+    <span>sell ~{{ d.expected_sale_price|money }}</span>
+    <span class="{{ 'text-green-700' if d.net_profit > 0 else 'text-red-700' }}"><b>{{ d.net_profit|money }}</b> / {{ d.net_margin|pct }}</span>
+    <span>{{ d.est_days_to_sell }}d</span>
+    {% if d.collection_only %}<span class="text-amber-700">collect {{ d.distance_miles|round|int if d.distance_miles is not none else '?' }} mi</span>{% endif %}
+  </div>
+  <div class="flex flex-wrap gap-1">
+    {% for f in d.item.risk_flags %}<span class="pill {{ 'pill-red' if f.severity == 'high' else 'pill-amber' if f.severity == 'medium' else 'pill-grey' }}" title="{{ f.detail }}">{{ f.label }}</span>{% endfor %}
+    {% if d.check_manually %}<span class="pill pill-amber">check manually</span>{% endif %}
+    {% if d.capital_warning %}<span class="pill pill-red">capital reserve</span>{% endif %}
+    {% if d.status not in ('new', 'alerted') %}<span class="pill pill-grey">{{ d.status }}</span>{% endif %}
+    {% if not d.should_alert and d.skip_reason %}<span class="pill pill-grey" title="{{ d.skip_reason }}">no alert</span>{% endif %}
+  </div>
+  <div class="flex gap-2 mt-1">
+    <form method="post" action="/deals/{{ d.id }}/decide"><input type="hidden" name="action" value="bought"><button class="btn btn-green">Bought</button></form>
+    <form method="post" action="/deals/{{ d.id }}/decide"><input type="hidden" name="action" value="pass"><button class="btn btn-grey">Pass</button></form>
+    <form method="post" action="/deals/{{ d.id }}/decide"><input type="hidden" name="action" value="watch"><button class="btn btn-grey">Watch</button></form>
+    <a href="{{ d.raw_listing.url }}" target="_blank" rel="noopener" class="btn btn-primary ml-auto">Listing</a>
+  </div>
+</div>

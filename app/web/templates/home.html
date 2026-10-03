@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% block title %}Home - DealFinder{% endblock %}{% block content %}
+{% if attention %}<div class="card bg-amber-50 border border-amber-200">
+  <b>Needs you:</b> {% for s in attention %}<a href="/health" class="underline">{{ s.name }}</a> ({{ s.status.replace('_',' ') }}{% if s.status_message %}: {{ s.status_message[:80] }}{% endif %}){{ ", " if not loop.last }}{% endfor %}
+</div>{% endif %}
+{% if tasks %}<div class="card">
+  <h2 class="font-semibold mb-2">Tasks</h2>
+  {% for t in tasks %}<div class="flex items-center gap-2 py-1 border-b last:border-0">
+    {% if t.urgent %}<span class="pill pill-red">urgent</span>{% endif %}
+    <div class="flex-1"><div class="text-sm font-medium">{{ t.title }}</div><div class="text-xs text-gray-500">{{ t.detail[:120] }}</div></div>
+    {% if t.ref_type == 'inventory_item' %}<a href="/inventory/{{ t.ref_id }}" class="btn btn-grey">Open</a>{% endif %}
+    <form method="post" action="/tasks/{{ t.id }}/done"><button class="btn btn-grey">Done</button></form>
+  </div>{% endfor %}
+</div>{% endif %}
+<div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+  <div class="card"><div class="text-xs text-gray-500">Deals today</div><div class="text-2xl font-bold">{{ stats.alerted }}<span class="text-sm text-gray-400"> / {{ stats.total }}</span></div></div>
+  <div class="card"><div class="text-xs text-gray-500">Stock at cost</div><div class="text-2xl font-bold">{{ stock_value|money }}</div></div>
+  <div class="card"><div class="text-xs text-gray-500">Cash available</div><div class="text-2xl font-bold">{{ cash|money }}</div></div>
+  <div class="card"><div class="text-xs text-gray-500">Profit this month</div><div class="text-2xl font-bold {{ 'text-green-700' if month_profit > 0 }}">{{ month_profit|money }}</div></div>
+  <div class="card"><div class="text-xs text-gray-500">Avg days to sell</div><div class="text-2xl font-bold">{{ avg_days if avg_days is not none else '-' }}</div></div>
+</div>
+<div class="flex items-center justify-between"><h2 class="font-semibold text-lg">Top open deals</h2><a href="/deals" class="text-sm text-indigo-700">All deals →</a></div>
+<div class="grid md:grid-cols-2 gap-3">{% for d in deals %}{% include "_deal_card.html" %}{% else %}<div class="card text-gray-500">No open deals yet. Sources poll on their schedule; check <a href="/health" class="underline">Health</a>.</div>{% endfor %}</div>
+{% if overdue %}<div class="card">
+  <h2 class="font-semibold mb-1">Ageing stock ({{ overdue|length }} past expected sell date)</h2>
+  {% for i in overdue[:6] %}<div class="text-sm py-0.5"><a href="/inventory/{{ i.id }}" class="underline">{{ i.sku }}</a> {{ i.title[:50] }} - expected by {{ i.expected_sell_by|dt('%d %b') }}</div>{% endfor %}
+</div>{% endif %}
+{% endblock %}

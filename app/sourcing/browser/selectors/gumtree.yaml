@@ -1,0 +1,25 @@
+site: gumtree
+base_url: https://www.gumtree.com
+search_url: "https://www.gumtree.com/search?search_category=video-games-consoles&q={query}&max_price={max_price}&sort=date"
+results:
+  item: "article[data-q='search-result'], li article, div[data-q='search-result']"
+  link: "a[data-q='search-result-anchor'], a[href*='/p/']"
+  title: "[data-q='tile-title'], h2, a[data-q='search-result-anchor']"
+  price: "[data-q='tile-price'], .listing-price, span[class*='price']"
+  location: "[data-q='tile-location'], .listing-location, [class*='location']"
+  image: "img"
+  image_attr: src
+  external_id_regex: "/(\\d{8,})/?(?:\\?|$)"
+detail:
+  title: "h1"
+  price: "h2[data-q='ad-price'], [data-q='ad-price'], .ad-price"
+  description: "[data-q='ad-description'], p.description, div[itemprop='description']"
+  location: "[data-q='ad-location'], .ad-location, span[itemprop='addressLocality']"
+  seller: "[data-q='seller-name'], h2.seller-name"
+  images: "[data-q='image-gallery'] img, .gallery img"
+block_signals:
+  captcha: ["iframe[src*='captcha']", "#challenge-form", "text=Verify you are human"]
+  login_wall: ["text=Sign in to continue"]
+  blocked: ["text=Access Denied", "text=Request blocked"]
+notes: |
+  Gumtree ads are almost always collection; "can post" in description flips collection_only to false.

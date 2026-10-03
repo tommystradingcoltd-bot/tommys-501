@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Deals - DealFinder{% endblock %}{% block content %}
+<form method="get" class="card grid grid-cols-2 md:grid-cols-7 gap-2 items-end text-sm">
+  <label>Sort<select name="sort">{% for k in ['score','margin','profit','speed','distance','newest'] %}<option value="{{ k }}" {{ 'selected' if sort == k }}>{{ k }}</option>{% endfor %}</select></label>
+  <label>Source<select name="source"><option value="">all</option>{% for s in sources %}<option value="{{ s.slug }}" {{ 'selected' if source == s.slug }}>{{ s.name }}</option>{% endfor %}</select></label>
+  <label>Status<select name="status">{% for k in ['open','bought','passed','watching','expired','all'] %}<option value="{{ k }}" {{ 'selected' if status == k }}>{{ k }}</option>{% endfor %}</select></label>
+  <label>Min margin %<input name="min_margin" type="number" value="{{ min_margin or '' }}"></label>
+  <label>Max days<input name="max_days" type="number" value="{{ max_days or '' }}"></label>
+  <label>Max miles<input name="max_distance" type="number" value="{{ max_distance or '' }}"></label>
+  <label class="flex items-center gap-1"><input type="checkbox" name="show_all" value="1" {{ 'checked' if show_all }} style="width:auto"> include non-alerts</label>
+  <button class="btn btn-primary md:col-span-7">Filter</button>
+</form>
+<div class="text-sm text-gray-500">{{ deals|length }} deals</div>
+<div class="grid md:grid-cols-2 gap-3">{% for d in deals %}{% include "_deal_card.html" %}{% else %}<div class="card text-gray-500">Nothing matches.</div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Sold data - DealFinder{% endblock %}{% block content %}
+<h1 class="text-lg font-bold">Sold-price data</h1>
+{% if msg %}<div class="card bg-green-50">{{ msg }}</div>{% endif %}
+<div class="card"><h2 class="font-semibold mb-1">Comps on file</h2><table><tr><th>Provider</th><th>Rows</th></tr>{% for p, n in counts %}<tr><td>{{ p }}</td><td>{{ n }}</td></tr>{% else %}<tr><td colspan="2" class="text-gray-500">None yet.</td></tr>{% endfor %}</table>
+<p class="text-xs text-gray-500 mt-2">Providers: <b>mock</b> (demo), <b>csv</b> (your uploads), <b>own_sales</b> (from your sales, weighted more as it grows), <b>ebay_insights</b> (official Marketplace Insights API once eBay approves access). No eBay sold pages are scraped.</p></div>
+<div class="card"><h2 class="font-semibold mb-1">Upload a CSV export (Terapeak / Seller Hub)</h2>
+<form method="post" action="/sold-data/upload" enctype="multipart/form-data" class="grid md:grid-cols-4 gap-2 items-end text-sm">
+  <label>Niche<select name="niche_id">{% for n in niches %}<option value="{{ n.id }}">{{ n.name }}</option>{% endfor %}</select></label>
+  <label>Default platform (if no column)<input name="default_platform" placeholder="e.g. SNES"></label>
+  <label>File<input type="file" name="file" accept=".csv" required></label>
+  <button class="btn btn-primary">Import</button>
+</form>
+<p class="text-xs text-gray-500 mt-2">Columns recognised: title, sold_price (or "Sold Price"), sold_at (or "Date Sold", dd/mm/yyyy or yyyy-mm-dd), platform, region, completeness, postage, id. Header case/spaces don't matter.</p></div>
+{% endblock %}

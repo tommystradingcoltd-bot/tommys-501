@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block title %}Projections - DealFinder{% endblock %}{% block content %}
+<h1 class="text-lg font-bold">Capital growth projection</h1>
+<form method="get" class="card grid grid-cols-2 md:grid-cols-3 gap-2 items-end text-sm">
+  <label>Net margin % (blank = realised {{ inp.net_margin|pct }})<input name="margin" type="number" step="0.1" placeholder="{{ (inp.net_margin*100)|round(1) }}"></label>
+  <label>Avg days to sell (blank = realised {{ inp.avg_days_to_sell }})<input name="days" type="number" step="1" placeholder="{{ inp.avg_days_to_sell }}"></label>
+  <button class="btn btn-primary">Recalculate</button>
+</form>
+<div class="card text-sm text-gray-600">Starting capital {{ inp.starting_capital|money }} · current (cash + stock at cost) {{ inp.current_capital|money }} · buying capacity {{ inp.monthly_buying_capacity|money }}/month (grows 10%/month) · {{ (inp.deploy_ratio*100)|int }}% of capital deployed · profits reinvested.</div>
+<div class="grid md:grid-cols-3 gap-3">
+{% for name, label in [('worst','Worst'),('expected','Expected'),('best','Best')] %}
+  <div class="card"><h2 class="font-semibold mb-1">{{ label }}</h2>
+    <table><tr><th>Month</th><th>Capital</th><th>Profit/mo</th><th>Growth</th></tr>
+    {% for r in p[name] %}<tr><td>{{ r.month }}</td><td class="font-bold">{{ r.capital|money }}</td><td>{{ r.monthly_profit|money }}</td><td>{{ r.growth_pct|pct }}</td></tr>{% endfor %}</table></div>
+{% endfor %}
+</div>
+{% if monthly %}<div class="card"><h2 class="font-semibold mb-1">Realised months used</h2><table><tr><th>Month</th><th>Sales</th><th>Revenue</th><th>Profit</th><th>Margin</th><th>Avg days</th></tr>
+{% for m in monthly %}<tr><td>{{ m.month }}</td><td>{{ m.sales }}</td><td>{{ m.revenue|money }}</td><td>{{ m.profit|money }}</td><td>{{ m.margin|pct }}</td><td>{{ m.avg_days }}</td></tr>{% endfor %}</table></div>{% endif %}
+<p class="text-xs text-gray-500">Model: each month the deployed stock turns over 30 ÷ days-to-sell times, earning margin ÷ (1 − margin) on cost per turn, capped by what one person can buy and process. Worst = half the turns at 60% of the margin; best = 1.3× turns at 1.2× margin. It is a sanity check, not a promise.</p>
+{% endblock %}

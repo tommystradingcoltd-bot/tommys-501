@@ -1,0 +1,25 @@
+site: shpock
+base_url: https://www.shpock.com
+search_url: "https://www.shpock.com/en-gb/results?q={query}&sort=newest"
+results:
+  item: "a[href*='/en-gb/i/'], div[data-testid='item-card']"
+  link: "self"
+  title: "h2, [data-testid='item-card-title'], p[class*='title']"
+  price: "[data-testid='item-card-price'], span[class*='price'], p[class*='price']"
+  location: "[data-testid='item-card-location'], span[class*='distance']"
+  image: "img"
+  image_attr: src
+  external_id_regex: "/i/([A-Za-z0-9_-]+)"
+detail:
+  title: "h1"
+  price: "[data-testid='item-price'], h2[class*='price']"
+  description: "[data-testid='item-description'], div[class*='description']"
+  location: "[data-testid='item-location'], span[class*='location']"
+  seller: "[data-testid='seller-name']"
+  images: "[data-testid='item-gallery'] img"
+block_signals:
+  captcha: ["iframe[src*='captcha']"]
+  login_wall: ["text=Log in to see", "[data-testid='login-modal']"]
+  blocked: ["text=Access Denied"]
+notes: |
+  Shpock supports both post and collect; buyer protection applies on paid-through-app purchases.

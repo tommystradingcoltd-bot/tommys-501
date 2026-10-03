@@ -1,0 +1,59 @@
+{% extends "base.html" %}{% block title %}Deal {{ deal.id }} - DealFinder{% endblock %}{% block content %}
+<div class="card">
+  <div class="flex justify-between items-start gap-2">
+    <div>
+      <h1 class="text-lg font-bold">{{ listing.title }}</h1>
+      <div class="text-sm text-gray-600">{{ listing.source.name }} · first seen {{ listing.first_seen_at|ago }} · {{ listing.listing_type }}{% if listing.ends_at %} ends {{ listing.ends_at|dt }}{% endif %} · status <b>{{ deal.status }}</b></div>
+    </div>
+    <span class="pill pill-blue text-base">score {{ deal.score|round|int }}</span>
+  </div>
+  <div class="flex gap-2 mt-3 flex-wrap">
+    <form method="post" action="/deals/{{ deal.id }}/decide" class="flex gap-1"><input type="hidden" name="action" value="bought"><input name="actual_price" type="number" step="0.01" placeholder="paid £ (optional)" style="width:11rem"><button class="btn btn-green">Bought</button></form>
+    <form method="post" action="/deals/{{ deal.id }}/decide"><input type="hidden" name="action" value="pass"><button class="btn btn-grey">Pass</button></form>
+    <form method="post" action="/deals/{{ deal.id }}/decide"><input type="hidden" name="action" value="watch"><button class="btn btn-grey">Watch</button></form>
+    {% if deal.status in ('passed','watching','expired') %}<form method="post" action="/deals/{{ deal.id }}/decide"><input type="hidden" name="action" value="reopen"><button class="btn btn-grey">Reopen</button></form>{% endif %}
+    <a href="{{ listing.url }}" target="_blank" rel="noopener" class="btn btn-primary">Open listing</a>
+  </div>
+</div>
+<div class="grid md:grid-cols-2 gap-3">
+  <div class="card">
+    <h2 class="font-semibold mb-2">Identified item</h2>
+    <table>
+      <tr><th>Platform</th><td>{{ item.platform }}</td></tr><tr><th>Title</th><td>{{ item.title }}</td></tr>
+      <tr><th>Category</th><td>{{ item.category }}{% if item.is_bundle %} (bundle){% endif %}</td></tr>
+      <tr><th>Region</th><td>{{ item.region }}</td></tr><tr><th>Completeness</th><td>{{ item.completeness }}</td></tr>
+      <tr><th>Model</th><td>{{ item.console_model or '-' }}</td></tr><tr><th>Accessories</th><td>{{ item.accessories|join(', ') or '-' }}</td></tr>
+      <tr><th>Condition</th><td>{{ item.condition_notes or '-' }}</td></tr><tr><th>ID confidence</th><td>{{ item.confidence|pct }} ({{ item.model_name }})</td></tr>
+    </table>
+    {% if item.bundle_items %}<h3 class="font-semibold mt-3 mb-1">Bundle contents</h3>
+    <table><tr><th>Item</th><th>Completeness</th><th>Median</th><th>Days</th><th>Conf</th></tr>
+    {% for p in b.bundle_parts or item.bundle_items %}<tr><td>{{ p.platform }} {{ p.title }}</td><td>{{ p.completeness }}</td><td>{{ p.median|money if p.median is defined else '-' }}</td><td>{{ p.days if p.days is defined else '-' }}</td><td>{{ p.confidence if p.confidence is defined else '-' }}</td></tr>{% endfor %}</table>{% endif %}
+    <h3 class="font-semibold mt-3 mb-1">Risk flags</h3>
+    {% for f in item.risk_flags %}<div class="text-sm"><span class="pill {{ 'pill-red' if f.severity == 'high' else 'pill-amber' if f.severity == 'medium' else 'pill-grey' }}">{{ f.severity }}</span> {{ f.label }} <span class="text-gray-500">{{ f.detail }}</span></div>{% else %}<div class="text-sm text-gray-500">None found.</div>{% endfor %}
+  </div>
+  <div class="card">
+    <h2 class="font-semibold mb-2">P&amp;L (predicted)</h2>
+    <table>
+      <tr><th>Buy price</th><td>{{ deal.buy_price|money }}</td></tr>
+      <tr><th>Buyer fees</th><td>{{ deal.buyer_fees|money }}</td></tr>
+      <tr><th>{{ 'Collection trip' if deal.collection_only else 'Inbound postage' }}</th><td>{{ deal.inbound_cost|money }}{% if deal.collection_only %} ({{ deal.distance_miles|round|int if deal.distance_miles is not none else '?' }} mi each way, {{ listing.location_text or listing.postcode_district }}){% endif %}</td></tr>
+      <tr><th class="font-bold">Landed cost</th><td class="font-bold">{{ deal.landed_cost|money }}</td></tr>
+      <tr><th>Expected sale</th><td>{{ deal.expected_sale_price|money }} <span class="text-gray-500">({{ b.confidence }} confidence{% if b.sold_count is defined %}, {{ b.sold_count }} sold / {{ b.active_count }} active, IQR {{ b.p25|money }}-{{ b.p75|money }}{% endif %})</span></td></tr>
+      <tr><th>Selling fees</th><td>-{{ deal.sell_fees|money }}</td></tr>
+      <tr><th>Outbound postage</th><td>-{{ deal.outbound_postage|money }} ({{ b.weight_class }})</td></tr>
+      <tr><th>Packaging</th><td>-{{ deal.packaging|money }}</td></tr>
+      <tr><th>Fault/return reserve</th><td>-{{ deal.reserve|money }}</td></tr>
+      <tr><th class="font-bold">Net profit</th><td class="font-bold {{ 'text-green-700' if deal.net_profit > 0 else 'text-red-700' }}">{{ deal.net_profit|money }} ({{ deal.net_margin|pct }} margin, ROI {{ deal.roi|pct }})</td></tr>
+      <tr><th>Days to sell</th><td>{{ deal.est_days_to_sell }} (tier {{ deal.tier }}, needs {{ b.min_margin_required|pct }})</td></tr>
+      <tr><th>Rule</th><td>{{ b.rule_reason }}{% if deal.skip_reason %}<br><span class="text-red-700">{{ deal.skip_reason }}</span>{% endif %}</td></tr>
+      <tr><th>Cash check</th><td>{{ b.cash_available|money }} available{% if deal.capital_warning %} <span class="pill pill-red">below reserve after purchase</span>{% endif %}</td></tr>
+    </table>
+    {% for n in b.notes or [] %}<div class="text-xs text-gray-500 mt-1">note: {{ n }}</div>{% endfor %}
+  </div>
+</div>
+<div class="card">
+  <h2 class="font-semibold mb-1">Listing text</h2>
+  <div class="text-sm whitespace-pre-wrap">{{ listing.description or '(no description captured)' }}</div>
+  {% if listing.image_urls %}<div class="flex gap-2 mt-2 overflow-x-auto">{% for u in listing.image_urls[:6] %}<img src="{{ u }}" alt="" class="h-24 rounded" loading="lazy" onerror="this.style.display='none'">{% endfor %}</div>{% endif %}
+</div>
+{% endblock %}

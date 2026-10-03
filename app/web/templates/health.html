@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% block title %}Health - DealFinder{% endblock %}{% block content %}
+<h1 class="text-lg font-bold">Source health</h1>
+<div class="grid md:grid-cols-2 gap-3">
+{% for s in sources %}
+  <div class="card">
+    <div class="flex justify-between items-center"><div><b>{{ s.name }}</b> <span class="text-xs text-gray-500">{{ s.kind }}</span></div>
+      {% set st = 'disabled' if not s.enabled else s.status %}
+      <span class="pill {{ 'pill-green' if st == 'ok' else 'pill-grey' if st == 'disabled' else 'pill-amber' if st in ('paused','needs_login') else 'pill-red' }}">{{ st.replace('_',' ') }}</span></div>
+    <div class="text-xs text-gray-600 mt-1">last run {{ s.last_run_at|ago }} · last success {{ s.last_success_at|ago }} · every {{ s.poll_interval_min }} min{% if s.kind == 'browser' %} · {{ s.min_delay_s }}–{{ s.max_delay_s }}s between pages, max {{ s.max_page_loads_per_hour }}/h, quiet {{ s.quiet_hours }}{% endif %}</div>
+    {% if s.status_message %}<div class="text-sm mt-1 text-amber-800">{{ s.status_message }}</div>{% endif %}
+    {% if s.last_error and s.status == 'error' %}<div class="text-xs mt-1 text-red-700">{{ s.last_error[:200] }}</div>{% endif %}
+    <div class="flex gap-2 mt-2">
+      {% if s.enabled and s.status != 'ok' %}<form method="post" action="/sources/{{ s.slug }}/resume"><button class="btn btn-amber">I've fixed it - resume</button></form>{% endif %}
+      {% if s.enabled %}<form method="post" action="/sources/{{ s.slug }}/run"><button class="btn btn-grey">Run now</button></form>{% endif %}
+    </div>
+  </div>
+{% endfor %}
+</div>
+<div class="card"><h2 class="font-semibold mb-1">Scheduled jobs</h2>
+<table><tr><th>Job</th><th>Next run</th></tr>{% for j in jobs %}<tr><td>{{ j.name }}</td><td>{{ j.next_run }}</td></tr>{% else %}<tr><td colspan="2" class="text-gray-500">Scheduler disabled (SCHEDULER_ENABLED=false) or not started.</td></tr>{% endfor %}</table></div>
+<div class="card"><h2 class="font-semibold mb-1">Recent notifications</h2>
+<table><tr><th>When</th><th>Kind</th><th>Priority</th><th>Title</th><th>Status</th></tr>
+{% for a in alerts %}<tr><td>{{ a.created_at|dt }}</td><td>{{ a.kind }}</td><td>{{ a.priority }}</td><td>{% if a.deal_id %}<a href="/deals/{{ a.deal_id }}" class="underline">{{ a.title }}</a>{% else %}{{ a.title }}{% endif %}</td><td><span class="pill {{ 'pill-green' if a.status == 'sent' else 'pill-red' if a.status == 'failed' else 'pill-grey' }}">{{ a.status }}</span></td></tr>{% endfor %}</table></div>
+{% endblock %}

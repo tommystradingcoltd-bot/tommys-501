@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}DealFinder{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f3f4f6;color:#111827;margin:0}
+  .card{background:#fff;border-radius:.75rem;box-shadow:0 1px 2px rgba(0,0,0,.06);padding:1rem}
+  .btn{display:inline-block;border-radius:.5rem;padding:.5rem .9rem;font-weight:600;font-size:.875rem;cursor:pointer;border:0}
+  .btn-primary{background:#4f46e5;color:#fff}.btn-green{background:#16a34a;color:#fff}.btn-grey{background:#e5e7eb;color:#111}.btn-red{background:#dc2626;color:#fff}.btn-amber{background:#d97706;color:#fff}
+  .pill{display:inline-block;border-radius:999px;padding:.1rem .55rem;font-size:.75rem;font-weight:600}
+  .pill-green{background:#dcfce7;color:#166534}.pill-amber{background:#fef3c7;color:#92400e}.pill-red{background:#fee2e2;color:#991b1b}.pill-grey{background:#e5e7eb;color:#374151}.pill-blue{background:#dbeafe;color:#1e40af}
+  input,select,textarea{border:1px solid #d1d5db;border-radius:.5rem;padding:.45rem .6rem;font-size:.9rem;width:100%}
+  table{width:100%;border-collapse:collapse;font-size:.85rem}th{text-align:left;color:#6b7280;font-weight:600;padding:.4rem .3rem;border-bottom:1px solid #e5e7eb}td{padding:.45rem .3rem;border-bottom:1px solid #f3f4f6;vertical-align:top}
+  nav a{color:#374151;text-decoration:none;font-size:.8rem;padding:.4rem .5rem;border-radius:.5rem;white-space:nowrap}nav a.active,nav a:hover{background:#e0e7ff;color:#3730a3}
+  .kanban{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem}.kanban>div{min-width:230px;flex:0 0 230px}
+  .md h1,.md h2{font-weight:700;margin:.8rem 0 .3rem}.md h1{font-size:1.1rem}.md h2{font-size:1rem}.md ul{list-style:disc;padding-left:1.2rem}.md li{margin:.15rem 0}
+</style>
+</head>
+<body class="min-h-screen">
+<header class="bg-white border-b sticky top-0 z-10">
+  <div class="max-w-6xl mx-auto px-3 py-2 flex items-center gap-3">
+    <a href="/" class="font-bold text-indigo-700 text-lg">DealFinder</a>
+    <nav class="flex gap-1 overflow-x-auto">
+      {% set p = request.url.path %}
+      <a href="/" class="{{ 'active' if p == '/' }}">Home</a>
+      <a href="/deals" class="{{ 'active' if p.startswith('/deals') }}">Deals</a>
+      <a href="/inventory" class="{{ 'active' if p.startswith('/inventory') }}">Stock</a>
+      <a href="/pnl" class="{{ 'active' if p.startswith('/pnl') }}">P&amp;L</a>
+      <a href="/projections" class="{{ 'active' if p.startswith('/projections') }}">Projections</a>
+      <a href="/insights" class="{{ 'active' if p.startswith('/insights') }}">Tips</a>
+      <a href="/health" class="{{ 'active' if p.startswith('/health') }}">Health</a>
+      <a href="/settings" class="{{ 'active' if p.startswith('/settings') }}">Settings</a>
+      <a href="/niches" class="{{ 'active' if p.startswith('/niches') }}">Niches</a>
+      <a href="/sold-data" class="{{ 'active' if p.startswith('/sold-data') }}">Sold data</a>
+    </nav>
+  </div>
+</header>
+<main class="max-w-6xl mx-auto px-3 py-4 space-y-4">
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>
