@@ -25,6 +25,7 @@ def bootstrap(load_seed: bool | None = None) -> None:
 
     s = get_settings()
     create_all()
+    _stamp_alembic_if_fresh()
     with db_session() as db:
         seed_defaults(db)
         niches = sync_niches(db)
@@ -41,6 +42,22 @@ def bootstrap(load_seed: bool | None = None) -> None:
             from app.identification.valuation import seed_mock_comps
             seed_mock_comps(db, niches[0])
         db.query(Deal).count()
+
+
+def _stamp_alembic_if_fresh() -> None:
+    """create_all() made the tables; record the migration head so a later `alembic upgrade head` is a no-op."""
+    from sqlalchemy import inspect
+    from app.db import get_engine
+    try:
+        if "alembic_version" in inspect(get_engine()).get_table_names():
+            return
+        from alembic import command
+        from alembic.config import Config
+        cfg = Config(str(Path(__file__).resolve().parent.parent / "alembic.ini"))
+        cfg.set_main_option("sqlalchemy.url", get_settings().database_url)
+        command.stamp(cfg, "head")
+    except Exception as e:  # pragma: no cover - never block startup on this
+        log.warning("could not stamp alembic version: %s", e)
 
 
 @asynccontextmanager

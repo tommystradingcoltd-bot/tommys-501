@@ -1,5 +1,5 @@
 # Playwright's official image ships Chromium + all OS deps, so the browser helper works in the container too.
-FROM mcr.microsoft.com/playwright/python:v1.49.0-noble
+FROM mcr.microsoft.com/playwright/python:v1.63.0-noble
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=Europe/London
 WORKDIR /app
