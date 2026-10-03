@@ -68,7 +68,6 @@ def evaluate(net_profit: float, net_margin: float, est_days: int, confidence: st
     score = score_deal(net_margin, est_days, confidence, net_profit)
     tier, min_margin = tier_for(est_days, cfg)
     capital_warning = cash_available is not None and (cash_available - landed_cost) < cfg.capital_reserve
-    base = dict(tier=tier, score=score, capital_warning=capital_warning)
 
     def no(reason: str, required: float = 0.0) -> Decision:
         return Decision(False, tier, required, reason, score, "low", False, capital_warning)

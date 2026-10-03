@@ -12,7 +12,6 @@ from __future__ import annotations
 import csv
 import io
 import logging
-import statistics
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Optional, Protocol

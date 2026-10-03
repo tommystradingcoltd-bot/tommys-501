@@ -8,7 +8,7 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Niche, RawListing as RawListingRow, SearchQuery, Source
+from app.models import Niche, RawListing as RawListingRow, Source
 from app.sourcing.base import RawListing, SourceError, SourcePaused
 from app.sourcing.dedupe import find_duplicate
 from app.sourcing.registry import build_watcher

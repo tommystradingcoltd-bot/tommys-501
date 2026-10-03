@@ -143,6 +143,7 @@ def purge_personal_data(db: Session, retention_days: int) -> int:
     """GDPR-ish hygiene: strip seller names/locations from listings I passed on (or never acted on) after N days."""
     from datetime import timedelta
     from sqlalchemy import select
+    db.flush()
     cutoff = datetime.utcnow() - timedelta(days=retention_days)
     n = 0
     for deal in db.scalars(select(Deal).where(Deal.status.in_(["passed", "new", "alerted", "expired"]), Deal.created_at < cutoff)):

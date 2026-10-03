@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dealfinder
+      POSTGRES_PASSWORD: dealfinder
+      POSTGRES_DB: dealfinder
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dealfinder"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  ntfy:
+    # Self-hosted push server (optional: point NTFY_SERVER at https://ntfy.sh instead and drop this service)
+    image: binwiederhier/ntfy:latest
+    command: serve
+    environment:
+      NTFY_BASE_URL: http://localhost:8080
+      NTFY_BEHIND_PROXY: "false"
+    ports:
+      - "8080:80"
+    volumes:
+      - ntfy:/var/lib/ntfy
+
+  app:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+psycopg2://dealfinder:dealfinder@db:5432/dealfinder
+      MOCK_MODE: ${MOCK_MODE:-true}
+      NTFY_SERVER: ${NTFY_SERVER:-http://ntfy:80}
+      BROWSER_PROFILE_DIR: /app/data/browser_profile
+      BROWSER_HEADLESS: "true"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data            # browser profile, uploads, labels persist here
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  ntfy:

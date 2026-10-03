@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import io
 
-from reportlab.graphics import renderPDF
 from reportlab.graphics.barcode import code128
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas

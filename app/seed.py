@@ -193,9 +193,7 @@ def active_count_for(platform: str, title: str, completeness: str) -> int:
 def seed_demo_history(db, niche, deals: list) -> int:
     """Mock-mode only: backdate a handful of bought->sold items so the P&L, accuracy and insights pages have data."""
     from datetime import date
-    from sqlalchemy import select
     from app.inventory.service import mark_bought, record_sale, set_status
-    from app.models import InventoryItem
     from app.settings_store import get_setting, set_setting
 
     if get_setting(db, "demo_history_loaded", False):
