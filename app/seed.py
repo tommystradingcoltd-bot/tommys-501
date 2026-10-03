@@ -208,11 +208,11 @@ def seed_demo_history(db, niche, deals: list) -> int:
         if d.status != "new":
             continue
         inv = mark_bought(db, d)
-        days_ago = 75 - i * 6
+        days_ago = 60 - i * 8
         inv.purchase_date = date.today() - timedelta(days=days_ago)
         inv.listed_at = datetime.utcnow() - timedelta(days=days_ago - 3)
         set_status(db, inv, "listed")
-        if i < 9:
+        if i < 4:
             sold_after = max(2, int(d.est_days_to_sell * rng.uniform(0.6, 1.5)))
             sold_at = inv.listed_at + timedelta(days=sold_after)
             if sold_at < datetime.utcnow():
