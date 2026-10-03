@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}More - DealFinder{% endblock %}{% block page_title %}More{% endblock %}{% block content %}
+<div class="card flush" data-tour="more">
+  {% for href, ic, t, s in [('/projections','proj','Projections','Capital growth 3/6/12 months ahead'),('/insights','tips','Growth tips','Weekly insights and clone-readiness'),('/health','health','Health','Source status, jobs, recent pushes'),('/sold-data','data','Sold data','Upload Terapeak CSVs, see comps on file'),('/niches','niches','Niches','Search terms and niche configs'),('/settings','settings','Settings','Rules, fees, postage, location, sources, notifications')] %}
+  <a href="{{ href }}" class="row"><div class="av">{{ icon(ic) }}</div><div class="body"><div class="t">{{ t }}</div><div class="s">{{ s }}</div></div><div class="amt muted">›</div></a>
+  {% endfor %}
+</div>
+<form method="post" action="/walkthrough/restart" class="mt-3"><button class="btn btn-grey btn-block">Show the walkthrough again</button></form>
+<p class="text-xs muted">DealFinder never buys, bids or messages anyone. It only alerts.</p>
+{% endblock %}

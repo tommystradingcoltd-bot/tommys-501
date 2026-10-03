@@ -1,0 +1,29 @@
+# Facebook Marketplace selectors. FB changes its DOM constantly: expect to edit these.
+site: facebook
+base_url: https://www.facebook.com
+search_url: "https://www.facebook.com/marketplace/{location_slug}/search?query={query}&maxPrice={max_price}&sortBy=creation_time_descend&exact=false"
+location_slug: manchester
+results:
+  item: "a[href*='/marketplace/item/']"
+  link: "self"
+  title: "span[dir='auto']:nth-of-type(2), span.x1lliihq.x6ikm8r"
+  title_fallback_index: 1
+  price: "span[dir='auto']:first-of-type, span.x193iq5w"
+  location: "span[dir='auto']:last-of-type"
+  image: "img"
+  image_attr: src
+  external_id_regex: "/marketplace/item/(\\d+)"
+detail:
+  title: "h1 span, h1"
+  price: "h1 + div span, div[aria-hidden='false'] span:contains('£')"
+  description: "div[data-pagelet*='Description'] span, div.xz9dl7a span[dir='auto']"
+  location: "a[href*='/marketplace/'][href*='location'] span, span:contains('Location is approximate')"
+  seller: "a[href*='/marketplace/profile/'] span"
+  images: "img[alt*='Product photo'], div[role='img'] img"
+block_signals:
+  captcha: ["text=Confirm you're human", "iframe[src*='captcha']"]
+  login_wall: ["form#login_form", "text=Log in to Facebook", "input[name='pass']", "text=You must log in to continue"]
+  blocked: ["text=temporarily blocked", "text=Your account has been restricted"]
+notes: |
+  Marketplace is collection-first: listings are treated as collection_only unless the detail page says shipping.
+  Location text is like "Stockport, Greater Manchester" - the town lookup resolves distance.

@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Niches - DealFinder{% endblock %}{% block back %}/more{% endblock %}{% block page_title %}Niches{% endblock %}{% block content %}
+
+{% if msg %}<div class="banner green">{{ msg }}</div>{% endif %}
+<div class="grid md:grid-cols-2 gap-3">{% for n in niches %}<a href="/niches/{{ n.id }}" class="card block"><b>{{ n.name }}</b> <span class="pill {{ 'pill-green' if n.active else 'pill-grey' }}">{{ 'active' if n.active else 'inactive' }}</span><div class="text-xs text-gray-500">{{ n.slug }} · {{ n.search_queries|length }} search terms · {{ n.config.platforms|length }} platforms</div></a>{% endfor %}</div>
+<form method="post" action="/niches/new" class="card grid md:grid-cols-3 gap-2 text-sm items-end">
+  <label>Slug<input name="slug" placeholder="e.g. vintage_lego" required></label><label>Name<input name="name" placeholder="Vintage LEGO" required></label>
+  <label class="md:col-span-3">Search terms (one per line)<textarea name="search_terms" rows="4"></textarea></label>
+  <button class="btn btn-primary">Create niche</button>
+</form>
+<p class="text-xs text-gray-500">A new niche starts with a minimal config; edit the YAML (platforms/aliases, normalisation hints, risk keywords, testing checklist, postage classes, photo shot list) on its page. Or drop a YAML file in <code>app/niches/</code> and restart (see RUNBOOK.md).</p>
+{% endblock %}

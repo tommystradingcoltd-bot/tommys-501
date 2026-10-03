@@ -1,0 +1,3 @@
+<table><tr><th>{{ label }}</th><th>#</th><th>Revenue</th><th>Profit</th><th>Margin</th><th>Avg days</th><th>Predicted £</th><th>Pred. days</th><th>Error £</th></tr>
+{% for r in rows %}<tr><td>{{ r.key }}</td><td>{{ r.count }}</td><td>{{ r.revenue|money }}</td><td class="{{ 'text-green-700' if r.profit > 0 else 'text-red-700' }}">{{ r.profit|money }}</td><td>{{ r.margin|pct }}</td><td>{{ r.avg_days }}</td><td>{{ r.predicted_profit|money }}</td><td>{{ r.predicted_days }}</td><td class="{{ 'text-green-700' if r.profit_error >= 0 else 'text-red-700' }}">{{ r.profit_error|money }}</td></tr>
+{% else %}<tr><td colspan="9" class="text-gray-500">No sales in this period.</td></tr>{% endfor %}</table>

@@ -1,0 +1,28 @@
+# Vinted UK selectors. Edit here when the site changes (see RUNBOOK.md). No code changes needed.
+site: vinted
+base_url: https://www.vinted.co.uk
+search_url: "https://www.vinted.co.uk/catalog?search_text={query}&order=newest_first&price_to={max_price}&currency=GBP"
+results:
+  item: "div[data-testid^='grid-item'], .feed-grid__item"
+  link: "a[href*='/items/']"
+  title: "[data-testid$='--description-title'], .web_ui__ItemBox__description, a[title]"
+  title_attr: title
+  price: "[data-testid$='--price-text'], .web_ui__Text__subtitle"
+  image: "img"
+  image_attr: src
+  external_id_regex: "/items/(\\d+)"
+detail:
+  title: "h1, [data-testid='item-page-summary-plugin'] h1"
+  price: "[data-testid='item-price'] , .details-list__item-value, [data-testid='item-page-sidebar-price']"
+  description: "[itemprop='description'], [data-testid='item-description'], .details-list__item-value--description"
+  location: "[data-testid='item-attributes-location'] [itemprop='value'], .details-list__item[data-testid*='location'] .details-list__item-value"
+  seller: "[data-testid='profile-username'], .web_ui__Cell__title"
+  images: "[data-testid='item-photo'] img, .item-photos img"
+  condition: "[data-testid='item-attributes-status'] [itemprop='value']"
+block_signals:
+  captcha: ["#px-captcha", "iframe[src*='captcha']", "text=Press & Hold", "text=unusual activity"]
+  login_wall: ["[data-testid='auth-modal']", "text=Log in to continue", "form#login_form"]
+  blocked: ["text=Access Denied", "text=has been blocked", "text=Too many requests"]
+notes: |
+  Vinted shows buyer protection on top of the price; the price parsed here is the item price.
+  Collection isn't a Vinted thing - everything is posted, so collection_only is always false.

@@ -1,0 +1,25 @@
+site: depop
+base_url: https://www.depop.com
+search_url: "https://www.depop.com/search/?q={query}&sort=newlyListed&priceMax={max_price}"
+results:
+  item: "li[class*='listItem'], div[class*='ProductCard'], a[href*='/products/']"
+  link: "a[href*='/products/']"
+  title: "p[class*='title'], [aria-label]"
+  title_attr: aria-label
+  price: "p[class*='price'], [aria-label*='price'], span[class*='Price']"
+  image: "img"
+  image_attr: src
+  external_id_regex: "/products/([A-Za-z0-9_-]+)"
+detail:
+  title: "h1"
+  price: "[data-testid='product-price'], p[class*='price']"
+  description: "[data-testid='product-description'], div[class*='description'] p"
+  location: "[data-testid='seller-location'], p[class*='location']"
+  seller: "a[href^='/'][class*='username'], [data-testid='seller-username']"
+  images: "div[class*='ProductImage'] img, [data-testid='product-image'] img"
+block_signals:
+  captcha: ["iframe[src*='captcha']", "text=Verify you are human"]
+  login_wall: ["text=Log in to continue", "[data-testid='login-modal']"]
+  blocked: ["text=Access Denied"]
+notes: |
+  Depop is post-only; shipping is often shown separately ("+ £3.50 shipping").

@@ -3,6 +3,9 @@ __pycache__/
 .env
 data/*.db
 data/*.db-journal
+data/*.db-shm
+data/*.db-wal
+backups/
 data/browser_profile/
 data/uploads/
 data/labels/

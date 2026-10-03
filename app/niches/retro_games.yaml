@@ -1,0 +1,139 @@
+# Niche config: Retro video games & consoles (UK).
+# Adding a new niche = add another YAML file in this folder (or via the dashboard Niches page).
+slug: retro_games
+name: Retro Games & Consoles
+active: true
+
+search_terms:
+  - "snes games"
+  - "super nintendo bundle"
+  - "mega drive games"
+  - "sega mega drive console"
+  - "n64 games"
+  - "nintendo 64 console"
+  - "ps1 games"
+  - "playstation 1 bundle"
+  - "game boy games"
+  - "gameboy color"
+  - "gamecube games"
+  - "dreamcast"
+  - "retro games job lot"
+  - "nes games"
+  - "master system"
+
+# Per-source price caps etc. (merged into search filters)
+default_filters:
+  max_price: 400
+  min_price: 3
+
+# Platforms the normaliser should recognise, with aliases (lowercase, matched as whole words / phrases).
+platforms:
+  SNES: ["snes", "super nintendo", "super nes", "super famicom"]
+  NES: ["nes", "nintendo entertainment system", "famicom"]
+  N64: ["n64", "nintendo 64"]
+  GameCube: ["gamecube", "game cube", "ngc"]
+  "Game Boy": ["game boy", "gameboy", "gb "]
+  "Game Boy Color": ["game boy color", "gameboy color", "gbc", "game boy colour"]
+  "Game Boy Advance": ["game boy advance", "gameboy advance", "gba"]
+  "Mega Drive": ["mega drive", "megadrive", "genesis", "sega mega"]
+  "Master System": ["master system"]
+  Saturn: ["sega saturn", "saturn"]
+  Dreamcast: ["dreamcast"]
+  PS1: ["ps1", "psx", "playstation 1", "playstation one", "ps one", "psone"]
+  PS2: ["ps2", "playstation 2"]
+  Xbox: ["original xbox", "xbox classic"]
+  "Game Gear": ["game gear"]
+  DS: ["nintendo ds", "ds lite"]
+
+# Normalisation hints passed to the Claude prompt (and used by the rule-based mock).
+normalisation_hints: |
+  Region: UK/EU listings are usually PAL. "US import", "NTSC", "USA" => NTSC-U. "Japanese", "JP", "Famicom" => NTSC-J.
+  Completeness: "cart only"/"loose"/"no box" => loose. "boxed"/"with box" => boxed. "complete"/"CIB"/"with manual and box" => cib.
+  "sealed"/"brand new"/"BNIB" => sealed. "VGA"/"WATA"/"graded" => graded.
+  Bundles: "job lot", "bundle", "collection", "x games", "lot of" => bundle, list each identifiable title.
+  Console models: SNES "SNSP-001" PAL, N64 colours (Atomic Purple, Jungle Green etc), PS1 SCPH-1002 / SCPH-102 PSone.
+
+# Keywords that raise risk flags (lowercase substrings).
+risk_keywords:
+  repro: ["repro", "reproduction", "replica", "custom cart", "unofficial", "bootleg", "homebrew", "aftermarket label", "multicart", "everdrive"]
+  untested: ["untested", "not tested", "unable to test", "no way to test", "sold as seen", "spares or repair", "spares/repair", "faulty", "not working", "for parts"]
+  missing_manual: ["no manual", "missing manual", "without manual", "box only", "no instructions"]
+  stolen_signals: ["no questions asked", "quick sale cash only", "need gone tonight", "found", "no idea what it is"]
+  stock_photo: ["stock image", "stock photo", "image for illustration", "picture for reference"]
+
+# Reproduction price sanity: if price < this fraction of median AND title has a known-expensive game, flag.
+repro_price_fraction: 0.25
+expensive_titles: ["earthbound", "chrono trigger", "pokemon", "pokémon", "harvest moon", "mega man x3", "castlevania", "conker", "panzer dragoon saga", "snatcher", "suikoden ii", "zelda", "mario rpg", "terranigma", "hagane", "fire emblem"]
+
+# Quality / testing checklist used in Module 5 (per category).
+testing_checklist:
+  game:
+    - key: boots
+      label: Boots to title screen
+    - key: saves
+      label: Saves work (where the game has a save battery/memory)
+    - key: label_auth
+      label: "Label authenticity (print quality, font, colour, Nintendo/Sega seal)"
+    - key: pcb_auth
+      label: "PCB authenticity (open cart if possible: board code, chip markings, no glob-top)"
+    - key: disc_grade
+      label: "Disc condition grade (A mint / B light marks / C scratches / D needs resurfacing)"
+    - key: region
+      label: Region matches listing (PAL/NTSC)
+    - key: contents
+      label: Box/manual/inserts present and matching
+  console:
+    - key: powers_on
+      label: "Powers on, no smell / burning"
+    - key: video_out
+      label: "Video output clean (AV/RF/RGB as applicable)"
+    - key: controller_ports
+      label: All controller ports work
+    - key: cart_slot
+      label: Cartridge slot / disc drive reads reliably
+    - key: cleaned
+      label: "Cleaned (shell, contacts, lens)"
+    - key: region
+      label: "Region / model number matches listing"
+  accessory:
+    - key: works
+      label: Functions as intended
+    - key: genuine
+      label: Genuine (official branding, model number)
+
+# Postage classes by category (keys match postage_rates.weight_class).
+postage_classes:
+  game_loose: large_letter
+  game_boxed: small_parcel
+  console: medium_parcel
+  bundle: medium_parcel
+  accessory: small_parcel
+
+# Packaging cost (GBP) per weight class, VERIFY.
+packaging_cost:
+  large_letter: 0.40
+  small_parcel: 0.90
+  medium_parcel: 1.80
+
+# Photo shot list per category for the listing generator.
+photo_shot_list:
+  game:
+    - Front of cartridge/disc, straight on, neutral background
+    - Back of cartridge/disc showing serial and label condition
+    - Label close-up (shows authenticity details)
+    - Contacts / disc surface close-up
+    - Box front, back, spine (if boxed)
+    - Manual and inserts fanned out (if present)
+    - Game running on screen (title screen) as proof of testing
+  console:
+    - Console front, straight on
+    - Console top and back (ports, model number sticker)
+    - Underside (serial label, feet)
+    - Every included controller, front and back
+    - All cables and power supply laid out
+    - Console switched on with title screen visible
+  bundle:
+    - Everything laid out together (the hero shot)
+    - Each game front, grouped by 4-6 per photo
+    - Any console/controllers close up
+    - Any damage or wear close up

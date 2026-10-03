@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}Stock - DealFinder{% endblock %}{% block page_title %}Stock{% endblock %}
+{% block topbar_right %}<a href="/inventory/export.csv" class="btn btn-grey btn-sm">Export CSV</a>{% endblock %}{% block content %}
+{% set active = request.query_params.get('status', 'active') %}
+<div class="chips" data-tour="chips">
+  <a href="/inventory?status=active" class="chip {{ 'on' if active == 'active' }}">Active ({{ columns.in_transit|length + columns.testing|length + columns.ready_to_photograph|length + columns.listed|length }})</a>
+  {% for s, items in columns.items() %}<a href="/inventory?status={{ s }}" class="chip {{ 'on' if active == s }}">{{ s.replace('_',' ')|capitalize }} ({{ items|length }})</a>{% endfor %}
+</div>
+{% set shown = (columns.in_transit + columns.testing + columns.ready_to_photograph + columns.listed) if active == 'active' else columns.get(active, []) %}
+<div class="card flush">
+  {% for i in shown %}<a href="/inventory/{{ i.id }}" class="row">
+    <div class="av {{ 'red' if i.is_overdue else ('green' if i.status in ('sold','shipped') else ('amber' if i.status == 'listed' else '')) }}">{{ i.platform[:3]|upper }}</div>
+    <div class="body"><div class="t">{{ i.title[:60] }}</div><div class="s">{{ i.sku }} · <span class="pill pill-blue">{{ i.status.replace('_',' ') }}</span>{% if i.status == 'listed' %} · sell by {{ i.expected_sell_by|dt('%d %b') }}{% endif %}{% if i.is_overdue %} · <span class="pill pill-red">overdue</span>{% endif %}</div></div>
+    <div class="amt"><b>{{ i.expected_sale_price|money }}</b><span>cost {{ i.cost_basis|money }}</span></div>
+  </a>{% else %}<div class="row"><div class="body muted">Nothing here. Press "Bought" on a deal to add stock.</div></div>{% endfor %}
+</div>
+<p class="text-xs muted">Flow: in transit → testing → ready to photograph → listed → sold → shipped. Red avatars are past their expected sell date.</p>
+{% endblock %}

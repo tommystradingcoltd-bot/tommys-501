@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% block title %}Growth tips - DealFinder{% endblock %}{% block back %}/more{% endblock %}{% block page_title %}Growth tips{% endblock %}{% block content %}
+<div class="flex items-center justify-between"><form method="post" action="/insights/generate"><button class="btn btn-primary">Generate now</button></form></div>
+{% for i in insights %}
+<div class="card">
+  <div class="text-xs text-gray-500 mb-1">{{ i.period_start|dt('%d %b') }} – {{ i.period_end|dt('%d %b %Y') }} {% if i.ready_to_clone %}<span class="pill pill-green">READY TO CLONE INTO A SECOND NICHE</span>{% else %}<span class="pill pill-grey">not yet ready to clone</span>{% endif %}</div>
+  <div class="md text-sm" id="ins-{{ i.id }}">{{ i.content_md }}</div>
+</div>
+{% else %}<div class="card text-gray-500">No insights yet. They generate every Monday at 07:30, or click Generate now.</div>{% endfor %}
+<script>
+// tiny markdown renderer (headings, bullets, bold)
+document.querySelectorAll('.md').forEach(el => {
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const lines = esc(el.textContent).split('\n'); let out = '', inList = false;
+  for (let l of lines) {
+    l = l.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+    if (/^\s*[-*] /.test(l)) { if (!inList) { out += '<ul>'; inList = true; } out += '<li>' + l.replace(/^\s*[-*] /, '') + '</li>'; continue; }
+    if (inList) { out += '</ul>'; inList = false; }
+    if (/^### /.test(l)) out += '<h3>' + l.slice(4) + '</h3>'; else if (/^## /.test(l)) out += '<h2>' + l.slice(3) + '</h2>'; else if (/^# /.test(l)) out += '<h1>' + l.slice(2) + '</h1>';
+    else if (/^\d+\. /.test(l)) out += '<h2>' + l + '</h2>'; else if (l.trim()) out += '<p>' + l + '</p>';
+  }
+  if (inList) out += '</ul>'; el.innerHTML = out;
+});
+</script>
+{% endblock %}

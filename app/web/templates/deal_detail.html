@@ -1,0 +1,58 @@
+{% extends "base.html" %}{% block title %}Deal {{ deal.id }} - DealFinder{% endblock %}{% block back %}/deals{% endblock %}{% block page_title %}Deal{% endblock %}{% block content %}
+<div class="hero" data-tour="hero" style="{{ 'background:linear-gradient(135deg,#1db954,#4fd37a)' if deal.should_alert else ('background:linear-gradient(135deg,#6b7280,#9ca3af)' if deal.net_profit > 0 else 'background:linear-gradient(135deg,#e5484d,#f08a8d)') }}">
+  <div class="label">Predicted net profit · score {{ deal.score|round|int }} · {{ deal.status }}</div>
+  <div class="big">{{ deal.net_profit|money }}</div>
+  <div class="sub"><div>Margin<b>{{ deal.net_margin|pct }}</b></div><div>ROI<b>{{ deal.roi|pct }}</b></div><div>Days to sell<b>{{ deal.est_days_to_sell }}</b></div><div>Buy<b>{{ deal.buy_price|money }}</b></div></div>
+</div>
+<div class="card">
+  <div class="font-bold">{{ listing.title }}</div>
+  <div class="text-sm muted mt-1">{{ listing.source.name }} · {{ listing.listing_type }}{% if listing.ends_at %} · ends {{ listing.ends_at|dt }}{% endif %} · seen {{ listing.first_seen_at|ago }}{% if deal.collection_only %} · collection {{ listing.location_text or listing.postcode_district }}{% endif %}</div>
+  <div class="flex flex-wrap gap-1 mt-2">
+    {% for f in item.risk_flags %}<span class="pill {{ 'pill-red' if f.severity == 'high' else 'pill-amber' if f.severity == 'medium' else 'pill-grey' }}" title="{{ f.detail }}">{{ f.label }}</span>{% endfor %}
+    {% if deal.check_manually %}<span class="pill pill-amber">check manually</span>{% endif %}{% if deal.capital_warning %}<span class="pill pill-red">below cash reserve</span>{% endif %}
+    {% if deal.skip_reason %}<span class="pill pill-grey">{{ deal.skip_reason[:70] }}</span>{% endif %}
+  </div>
+  <div class="grid grid-cols-2 gap-2 mt-3" data-tour="decide">
+    <a href="{{ listing.url }}" target="_blank" rel="noopener" class="btn btn-primary btn-block">Open listing</a>
+    <form method="post" action="/deals/{{ deal.id }}/decide"><input type="hidden" name="action" value="bought"><button class="btn btn-green btn-block">Bought</button></form>
+    <form method="post" action="/deals/{{ deal.id }}/decide"><input type="hidden" name="action" value="pass"><button class="btn btn-grey btn-block">Pass</button></form>
+    <form method="post" action="/deals/{{ deal.id }}/decide"><input type="hidden" name="action" value="watch"><button class="btn btn-grey btn-block">Watch</button></form>
+    {% if deal.status in ('passed','watching','expired') %}<form method="post" action="/deals/{{ deal.id }}/decide" class="col-span-2"><input type="hidden" name="action" value="reopen"><button class="btn btn-grey btn-block">Reopen</button></form>{% endif %}
+  </div>
+  <form method="post" action="/deals/{{ deal.id }}/decide" class="flex gap-2 items-end mt-2"><input type="hidden" name="action" value="bought"><label class="flex-1">Paid a different price?<input name="actual_price" type="number" step="0.01" placeholder="£"></label><button class="btn btn-green">Bought at this price</button></form>
+</div>
+<div class="section"><h2>Money</h2></div>
+<div class="card" data-tour="money">
+  <div class="kv"><span class="k">Buy price</span><span class="v">{{ deal.buy_price|money }}</span></div>
+  <div class="kv"><span class="k">Buyer fees</span><span class="v">{{ deal.buyer_fees|money }}</span></div>
+  <div class="kv"><span class="k">{{ 'Collection trip' if deal.collection_only else 'Inbound postage' }}{% if deal.collection_only and deal.distance_miles is not none %} ({{ deal.distance_miles|round|int }} mi each way){% endif %}</span><span class="v">{{ deal.inbound_cost|money }}</span></div>
+  <div class="kv"><span class="k"><b>Landed cost</b></span><span class="v">{{ deal.landed_cost|money }}</span></div>
+  <div class="kv"><span class="k">Expected sale ({{ b.confidence }} confidence{% if b.sold_count is defined %}, {{ b.sold_count }} sold / {{ b.active_count }} active, IQR {{ b.p25|money }}–{{ b.p75|money }}{% endif %})</span><span class="v">{{ deal.expected_sale_price|money }}</span></div>
+  <div class="kv"><span class="k">Selling fees</span><span class="v neg">-{{ deal.sell_fees|money }}</span></div>
+  <div class="kv"><span class="k">Outbound postage ({{ b.weight_class }})</span><span class="v neg">-{{ deal.outbound_postage|money }}</span></div>
+  <div class="kv"><span class="k">Packaging</span><span class="v neg">-{{ deal.packaging|money }}</span></div>
+  <div class="kv"><span class="k">Fault / return reserve</span><span class="v neg">-{{ deal.reserve|money }}</span></div>
+  <div class="kv"><span class="k"><b>Net profit</b></span><span class="v {{ 'pos' if deal.net_profit > 0 else 'neg' }}">{{ deal.net_profit|money }}</span></div>
+  <div class="kv"><span class="k">Rule</span><span class="v font-normal text-sm">tier {{ deal.tier }} needs {{ b.min_margin_required|pct }} · {{ b.rule_reason }}</span></div>
+  <div class="kv"><span class="k">Cash after purchase</span><span class="v">{{ (b.cash_available - deal.landed_cost)|money }}</span></div>
+  {% for n in b.notes or [] %}<div class="text-xs muted mt-1">note: {{ n }}</div>{% endfor %}
+</div>
+<div class="section"><h2>Identified item</h2></div>
+<div class="card">
+  <div class="kv"><span class="k">Platform</span><span class="v">{{ item.platform }}</span></div>
+  <div class="kv"><span class="k">Title</span><span class="v">{{ item.title }}</span></div>
+  <div class="kv"><span class="k">Category</span><span class="v">{{ item.category }}{% if item.is_bundle %} (bundle){% endif %}</span></div>
+  <div class="kv"><span class="k">Region / completeness</span><span class="v">{{ item.region }} · {{ item.completeness }}</span></div>
+  {% if item.console_model %}<div class="kv"><span class="k">Model</span><span class="v">{{ item.console_model }}</span></div>{% endif %}
+  {% if item.accessories %}<div class="kv"><span class="k">Accessories</span><span class="v">{{ item.accessories|join(', ') }}</span></div>{% endif %}
+  {% if item.condition_notes %}<div class="kv"><span class="k">Condition</span><span class="v">{{ item.condition_notes }}</span></div>{% endif %}
+  <div class="kv"><span class="k">ID confidence</span><span class="v">{{ item.confidence|pct }} ({{ item.model_name }})</span></div>
+</div>
+{% if item.bundle_items %}
+<div class="section"><h2>Bundle contents</h2></div>
+<div class="card flush">{% for p in b.bundle_parts or item.bundle_items %}<div class="row"><div class="av grey">{{ loop.index }}</div><div class="body"><div class="t">{{ p.platform }} {{ p.title }}</div><div class="s">{{ p.completeness }}{% if p.days is defined %} · {{ p.days }}d · {{ p.confidence }} confidence{% endif %}</div></div><div class="amt"><b>{{ p.median|money if p.median is defined else '-' }}</b></div></div>{% endfor %}</div>
+{% endif %}
+<div class="section"><h2>Listing text</h2></div>
+<div class="card text-sm whitespace-pre-wrap">{{ listing.description or '(no description captured)' }}
+{% if listing.image_urls %}<div class="flex gap-2 mt-2 overflow-x-auto">{% for u in listing.image_urls[:6] %}<img src="{{ u }}" alt="" class="h-24 rounded" loading="lazy" onerror="this.style.display='none'">{% endfor %}</div>{% endif %}</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% block title %}Home - DealFinder{% endblock %}{% block page_title %}Hi, Tommy{% endblock %}{% block content %}
+<div class="hero" data-tour="hero">
+  <div class="label">Cash available</div>
+  <div class="big">{{ cash|money }}</div>
+  <div class="sub"><div>Stock at cost<b>{{ stock_value|money }}</b></div><div>Profit this month<b>{{ month_profit|money }}</b></div><div>Avg days to sell<b>{{ avg_days if avg_days is not none else '-' }}</b></div></div>
+</div>
+<div class="actions" data-tour="actions">
+  <a href="/deals"><span class="ic">{{ icon('deals') }}</span>Deals</a>
+  <form method="post" action="/sources/ebay/run"><button type="submit"><span class="ic">{{ icon('scan') }}</span>Scan eBay</button></form>
+  <a href="/inventory"><span class="ic">{{ icon('stock') }}</span>Stock</a>
+  <a href="/sold-data"><span class="ic">{{ icon('data') }}</span>Sold data</a>
+  <a href="/health"><span class="ic">{{ icon('health') }}</span>Health</a>
+  <a href="/settings"><span class="ic">{{ icon('settings') }}</span>Settings</a>
+</div>
+{% if attention %}<div class="banner amber"><b>Needs you:</b> {% for s in attention %}<a href="/health" class="underline">{{ s.name }}</a> ({{ s.status.replace('_',' ') }}){{ ", " if not loop.last }}{% endfor %}</div>{% endif %}
+{% if tasks %}
+<div class="section"><h2>Tasks</h2></div>
+<div class="card flush">
+  {% for t in tasks %}<div class="row">
+    <div class="av {{ 'red' if t.urgent else 'amber' }}">!</div>
+    <div class="body"><div class="t">{{ t.title }}</div><div class="s">{{ t.detail[:90] }}</div></div>
+    <div class="flex gap-1">{% if t.ref_type == 'inventory_item' %}<a href="/inventory/{{ t.ref_id }}" class="btn btn-grey btn-sm">Open</a>{% endif %}
+    <form method="post" action="/tasks/{{ t.id }}/done"><button class="btn btn-grey btn-sm">Done</button></form></div>
+  </div>{% endfor %}
+</div>{% endif %}
+<div class="section"><h2>Today's deals <span class="muted text-sm">{{ stats.alerted }} of {{ stats.total }} scanned</span></h2><a href="/deals">See all</a></div>
+<div class="card flush" data-tour="deals">
+  {% for d in deals %}{% include "_deal_row.html" %}{% else %}<div class="row"><div class="body muted">No open deals yet. Sources poll on their schedule - check Health.</div></div>{% endfor %}
+</div>
+{% if overdue %}
+<div class="section"><h2>Ageing stock</h2><a href="/inventory">Stock</a></div>
+<div class="card flush">
+  {% for i in overdue[:6] %}<a href="/inventory/{{ i.id }}" class="row"><div class="av amber">{{ i.platform[:3]|upper }}</div><div class="body"><div class="t">{{ i.title[:50] }}</div><div class="s">{{ i.sku }} · expected by {{ i.expected_sell_by|dt('%d %b') }} · mark down</div></div><div class="amt"><b>{{ i.cost_basis|money }}</b><span>cost</span></div></a>{% endfor %}
+</div>{% endif %}
+{% endblock %}
