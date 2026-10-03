@@ -5,7 +5,7 @@ install:
 	playwright install chromium
 
 run:            ## run locally with SQLite + mock data
-	alembic upgrade head && uvicorn app.main:app --reload --port 8000
+	alembic upgrade head && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 test:
 	APP_ENV=test pytest -q

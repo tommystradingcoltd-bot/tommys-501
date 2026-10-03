@@ -5,7 +5,7 @@ Everything runs in mock mode out of the box. Each step below unlocks a real inte
 ## 1. Run it once (5 min)
 - [ ] `cp .env.example .env`
 - [ ] `docker compose up --build` (or `make install && make run` for SQLite) and open http://localhost:8000
-- [ ] Open it on your phone on the same Wi-Fi (`http://<your-pc-ip>:8000`) — the UI is designed for a phone.
+- [ ] Open it on your phone on the same Wi-Fi (`http://<your-pc-ip>:8000`), then Share → "Add to Home Screen" so it runs full-screen like an app. The UI is designed for a phone.
 
 ## 2. Set your base location (1 min)
 - [ ] Settings → Base location → enter your office postcode district (e.g. `M1`). Change it whenever you travel;
