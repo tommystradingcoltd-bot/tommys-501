@@ -1,6 +1,6 @@
-{% extends "base.html" %}{% block title %}Sold data - DealFinder{% endblock %}{% block content %}
-<h1 class="text-lg font-bold">Sold-price data</h1>
-{% if msg %}<div class="card bg-green-50">{{ msg }}</div>{% endif %}
+{% extends "base.html" %}{% block title %}Sold data - DealFinder{% endblock %}{% block back %}/more{% endblock %}{% block page_title %}Sold data{% endblock %}{% block content %}
+
+{% if msg %}<div class="banner green">{{ msg }}</div>{% endif %}
 <div class="card"><h2 class="font-semibold mb-1">Comps on file</h2><table><tr><th>Provider</th><th>Rows</th></tr>{% for p, n in counts %}<tr><td>{{ p }}</td><td>{{ n }}</td></tr>{% else %}<tr><td colspan="2" class="text-gray-500">None yet.</td></tr>{% endfor %}</table>
 <p class="text-xs text-gray-500 mt-2">Providers: <b>mock</b> (demo), <b>csv</b> (your uploads), <b>own_sales</b> (from your sales, weighted more as it grows), <b>ebay_insights</b> (official Marketplace Insights API once eBay approves access). No eBay sold pages are scraped.</p></div>
 <div class="card"><h2 class="font-semibold mb-1">Upload a CSV export (Terapeak / Seller Hub)</h2>

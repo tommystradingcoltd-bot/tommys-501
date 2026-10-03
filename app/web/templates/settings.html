@@ -1,6 +1,6 @@
-{% extends "base.html" %}{% block title %}Settings - DealFinder{% endblock %}{% block content %}
-<div class="flex gap-1 overflow-x-auto text-sm">{% for t, l in [('rules','Deal rules'),('location','Base location'),('fees','Fees'),('postage','Postage'),('sources','Sources'),('notifications','Notifications')] %}<a href="/settings?tab={{ t }}" class="btn {{ 'btn-primary' if tab == t else 'btn-grey' }}">{{ l }}</a>{% endfor %}</div>
-{% if msg %}<div class="card bg-green-50 text-sm">{{ msg }}</div>{% endif %}
+{% extends "base.html" %}{% block title %}Settings - DealFinder{% endblock %}{% block back %}/more{% endblock %}{% block page_title %}Settings{% endblock %}{% block content %}
+<div class="chips">{% for t, l in [('rules','Deal rules'),('location','Base location'),('fees','Fees'),('postage','Postage'),('sources','Sources'),('notifications','Notifications')] %}<a href="/settings?tab={{ t }}" class="chip {{ 'on' if tab == t }}">{{ l }}</a>{% endfor %}</div>
+{% if msg %}<div class="banner green">{{ msg }}</div>{% endif %}
 
 {% if tab == 'rules' %}
 <form method="post" action="/settings/rules" class="card grid md:grid-cols-3 gap-3 text-sm">
@@ -30,7 +30,7 @@
 </form>
 
 {% elif tab == 'fees' %}
-<div class="card text-xs text-amber-800 bg-amber-50">Every value below is a seeded default marked <b>VERIFY</b> until you tick "verified". Check them against the platforms' current fee pages (see SETUP_CHECKLIST.md).</div>
+<div class="banner amber">Every value below is a seeded default marked <b>VERIFY</b> until you tick "verified". Check them against the platforms' current fee pages (see SETUP_CHECKLIST.md).</div>
 {% set groups = fees|groupby('group') %}
 {% for g in groups %}<div class="card"><h2 class="font-semibold mb-1">{{ g.grouper.replace('_',' ') }}</h2>
 <table><tr><th>Fee</th><th>Value</th><th>Unit</th><th>Verified</th><th></th></tr>
@@ -41,7 +41,7 @@
   <td><button class="btn btn-grey">Save</button></td></form></tr>{% endfor %}</table></div>{% endfor %}
 
 {% elif tab == 'postage' %}
-<div class="card text-xs text-amber-800 bg-amber-50">Seeded rate-card defaults (Royal Mail / Evri) marked VERIFY. Set one default per weight class.</div>
+<div class="banner amber">Seeded rate-card defaults (Royal Mail / Evri) marked VERIFY. Set one default per weight class.</div>
 <div class="card"><table><tr><th>Carrier</th><th>Service</th><th>Class</th><th>Max g</th><th>Price</th><th>Default</th><th>Verified</th><th></th></tr>
 {% for r in postage %}<tr><form method="post" action="/settings/postage/{{ r.id }}">
   <td>{{ r.carrier }}</td><td>{{ r.service }}</td><td>{{ r.weight_class }}</td><td>{{ r.max_weight_g }}</td>

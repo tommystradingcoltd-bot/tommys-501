@@ -1,6 +1,6 @@
-{% extends "base.html" %}{% block title %}{{ niche.name }} - DealFinder{% endblock %}{% block content %}
-<h1 class="text-lg font-bold">{{ niche.name }} <span class="text-sm text-gray-500 font-normal">{{ niche.slug }}</span></h1>
-{% if msg %}<div class="card bg-green-50 text-sm">{{ msg }}</div>{% endif %}
+{% extends "base.html" %}{% block title %}{{ niche.name }} - DealFinder{% endblock %}{% block back %}/niches{% endblock %}{% block page_title %}{{ niche.name }}{% endblock %}{% block content %}
+
+{% if msg %}<div class="banner green">{{ msg }}</div>{% endif %}
 <div class="card"><h2 class="font-semibold mb-1">Search terms</h2>
 <table><tr><th>Query</th><th>Filters</th><th>Last run</th><th>Active</th></tr>
 {% for q in queries %}<tr><td>{{ q.query }}</td><td class="text-xs">{{ q.filters }}</td><td>{{ q.last_run_at|ago }}</td><td><form method="post" action="/niches/{{ niche.id }}/queries/{{ q.id }}/toggle"><button class="pill {{ 'pill-green' if q.active else 'pill-grey' }}">{{ 'on' if q.active else 'off' }}</button></form></td></tr>{% endfor %}</table>

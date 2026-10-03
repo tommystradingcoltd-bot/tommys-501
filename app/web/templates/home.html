@@ -1,27 +1,35 @@
-{% extends "base.html" %}{% block title %}Home - DealFinder{% endblock %}{% block content %}
-{% if attention %}<div class="card bg-amber-50 border border-amber-200">
-  <b>Needs you:</b> {% for s in attention %}<a href="/health" class="underline">{{ s.name }}</a> ({{ s.status.replace('_',' ') }}{% if s.status_message %}: {{ s.status_message[:80] }}{% endif %}){{ ", " if not loop.last }}{% endfor %}
-</div>{% endif %}
-{% if tasks %}<div class="card">
-  <h2 class="font-semibold mb-2">Tasks</h2>
-  {% for t in tasks %}<div class="flex items-center gap-2 py-1 border-b last:border-0">
-    {% if t.urgent %}<span class="pill pill-red">urgent</span>{% endif %}
-    <div class="flex-1"><div class="text-sm font-medium">{{ t.title }}</div><div class="text-xs text-gray-500">{{ t.detail[:120] }}</div></div>
-    {% if t.ref_type == 'inventory_item' %}<a href="/inventory/{{ t.ref_id }}" class="btn btn-grey">Open</a>{% endif %}
-    <form method="post" action="/tasks/{{ t.id }}/done"><button class="btn btn-grey">Done</button></form>
+{% extends "base.html" %}{% block title %}Home - DealFinder{% endblock %}{% block page_title %}Hi, Tommy{% endblock %}{% block content %}
+<div class="hero">
+  <div class="label">Cash available</div>
+  <div class="big">{{ cash|money }}</div>
+  <div class="sub"><div>Stock at cost<b>{{ stock_value|money }}</b></div><div>Profit this month<b>{{ month_profit|money }}</b></div><div>Avg days to sell<b>{{ avg_days if avg_days is not none else '-' }}</b></div></div>
+</div>
+<div class="actions">
+  <a href="/deals"><span class="ic">{{ icon('deals') }}</span>Deals</a>
+  <form method="post" action="/sources/ebay/run"><button type="submit"><span class="ic">{{ icon('scan') }}</span>Scan eBay</button></form>
+  <a href="/inventory"><span class="ic">{{ icon('stock') }}</span>Stock</a>
+  <a href="/sold-data"><span class="ic">{{ icon('data') }}</span>Sold data</a>
+  <a href="/health"><span class="ic">{{ icon('health') }}</span>Health</a>
+  <a href="/settings"><span class="ic">{{ icon('settings') }}</span>Settings</a>
+</div>
+{% if attention %}<div class="banner amber"><b>Needs you:</b> {% for s in attention %}<a href="/health" class="underline">{{ s.name }}</a> ({{ s.status.replace('_',' ') }}){{ ", " if not loop.last }}{% endfor %}</div>{% endif %}
+{% if tasks %}
+<div class="section"><h2>Tasks</h2></div>
+<div class="card flush">
+  {% for t in tasks %}<div class="row">
+    <div class="av {{ 'red' if t.urgent else 'amber' }}">!</div>
+    <div class="body"><div class="t">{{ t.title }}</div><div class="s">{{ t.detail[:90] }}</div></div>
+    <div class="flex gap-1">{% if t.ref_type == 'inventory_item' %}<a href="/inventory/{{ t.ref_id }}" class="btn btn-grey btn-sm">Open</a>{% endif %}
+    <form method="post" action="/tasks/{{ t.id }}/done"><button class="btn btn-grey btn-sm">Done</button></form></div>
   </div>{% endfor %}
 </div>{% endif %}
-<div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-  <div class="card"><div class="text-xs text-gray-500">Deals today</div><div class="text-2xl font-bold">{{ stats.alerted }}<span class="text-sm text-gray-400"> / {{ stats.total }}</span></div></div>
-  <div class="card"><div class="text-xs text-gray-500">Stock at cost</div><div class="text-2xl font-bold">{{ stock_value|money }}</div></div>
-  <div class="card"><div class="text-xs text-gray-500">Cash available</div><div class="text-2xl font-bold">{{ cash|money }}</div></div>
-  <div class="card"><div class="text-xs text-gray-500">Profit this month</div><div class="text-2xl font-bold {{ 'text-green-700' if month_profit > 0 }}">{{ month_profit|money }}</div></div>
-  <div class="card"><div class="text-xs text-gray-500">Avg days to sell</div><div class="text-2xl font-bold">{{ avg_days if avg_days is not none else '-' }}</div></div>
+<div class="section"><h2>Today's deals <span class="muted text-sm">{{ stats.alerted }} of {{ stats.total }} scanned</span></h2><a href="/deals">See all</a></div>
+<div class="card flush">
+  {% for d in deals %}{% include "_deal_row.html" %}{% else %}<div class="row"><div class="body muted">No open deals yet. Sources poll on their schedule - check Health.</div></div>{% endfor %}
 </div>
-<div class="flex items-center justify-between"><h2 class="font-semibold text-lg">Top open deals</h2><a href="/deals" class="text-sm text-indigo-700">All deals →</a></div>
-<div class="grid md:grid-cols-2 gap-3">{% for d in deals %}{% include "_deal_card.html" %}{% else %}<div class="card text-gray-500">No open deals yet. Sources poll on their schedule; check <a href="/health" class="underline">Health</a>.</div>{% endfor %}</div>
-{% if overdue %}<div class="card">
-  <h2 class="font-semibold mb-1">Ageing stock ({{ overdue|length }} past expected sell date)</h2>
-  {% for i in overdue[:6] %}<div class="text-sm py-0.5"><a href="/inventory/{{ i.id }}" class="underline">{{ i.sku }}</a> {{ i.title[:50] }} - expected by {{ i.expected_sell_by|dt('%d %b') }}</div>{% endfor %}
+{% if overdue %}
+<div class="section"><h2>Ageing stock</h2><a href="/inventory">Stock</a></div>
+<div class="card flush">
+  {% for i in overdue[:6] %}<a href="/inventory/{{ i.id }}" class="row"><div class="av amber">{{ i.platform[:3]|upper }}</div><div class="body"><div class="t">{{ i.title[:50] }}</div><div class="s">{{ i.sku }} · expected by {{ i.expected_sell_by|dt('%d %b') }} · mark down</div></div><div class="amt"><b>{{ i.cost_basis|money }}</b><span>cost</span></div></a>{% endfor %}
 </div>{% endif %}
 {% endblock %}

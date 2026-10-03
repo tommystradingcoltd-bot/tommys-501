@@ -1,6 +1,6 @@
-{% extends "base.html" %}{% block title %}Niches - DealFinder{% endblock %}{% block content %}
-<h1 class="text-lg font-bold">Niches</h1>
-{% if msg %}<div class="card bg-green-50 text-sm">{{ msg }}</div>{% endif %}
+{% extends "base.html" %}{% block title %}Niches - DealFinder{% endblock %}{% block back %}/more{% endblock %}{% block page_title %}Niches{% endblock %}{% block content %}
+
+{% if msg %}<div class="banner green">{{ msg }}</div>{% endif %}
 <div class="grid md:grid-cols-2 gap-3">{% for n in niches %}<a href="/niches/{{ n.id }}" class="card block"><b>{{ n.name }}</b> <span class="pill {{ 'pill-green' if n.active else 'pill-grey' }}">{{ 'active' if n.active else 'inactive' }}</span><div class="text-xs text-gray-500">{{ n.slug }} · {{ n.search_queries|length }} search terms · {{ n.config.platforms|length }} platforms</div></a>{% endfor %}</div>
 <form method="post" action="/niches/new" class="card grid md:grid-cols-3 gap-2 text-sm items-end">
   <label>Slug<input name="slug" placeholder="e.g. vintage_lego" required></label><label>Name<input name="name" placeholder="Vintage LEGO" required></label>

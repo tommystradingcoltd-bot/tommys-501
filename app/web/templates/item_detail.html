@@ -1,8 +1,8 @@
-{% extends "base.html" %}{% block title %}{{ item.sku }} - DealFinder{% endblock %}{% block content %}
+{% extends "base.html" %}{% block title %}{{ item.sku }} - DealFinder{% endblock %}{% block back %}/inventory{% endblock %}{% block page_title %}{{ item.sku }}{% endblock %}{% block content %}
 <div class="card">
   <div class="flex justify-between items-start gap-2 flex-wrap">
     <div><div class="text-xs text-gray-500">{{ item.sku }} · bought {{ item.purchase_date|dt('%d %b %Y') }} from {{ item.source }}</div>
-      <h1 class="text-lg font-bold">{{ item.platform }} {{ item.title }} <span class="text-gray-500 font-normal">{{ item.completeness }} {{ item.region }}</span></h1>
+      <h2>{{ item.platform }} {{ item.title }} <span class="text-gray-500 font-normal">{{ item.completeness }} {{ item.region }}</span></h2>
       <div class="text-sm">Cost {{ item.cost_basis|money }} · expected sale {{ item.expected_sale_price|money }} in {{ item.expected_days_to_sell }}d · predicted profit {{ item.expected_net_profit|money }}{% if item.is_overdue %} <span class="pill pill-red">overdue</span>{% endif %}</div></div>
     <div class="flex gap-2 items-center">
       <span class="pill pill-blue">{{ item.status.replace('_',' ') }}</span>

@@ -79,7 +79,7 @@ app/
   notify/              Notifier interface, ntfy, Pushover, mock, alert service (digest, daily summary)
   inventory/           SKU, labels (PDF), testing checklists, listing generator, eBay Sell API (+mock), cross-lister, lifecycle
   analytics/           P&L, projections, weekly insights
-  web/                 FastAPI routes + Jinja/Tailwind/HTMX templates
+  web/                 FastAPI routes + Jinja/HTMX templates + app.css (Revolut-style theme, dark mode)
   jobs/scheduler.py    APScheduler jobs (one per source, digest, daily, weekly insights, purge, eBay sales sync)
   pipeline.py          listing -> item -> valuation -> P&L -> rules -> alert
   seed.py              50 seed listings, mock sold comps, demo history

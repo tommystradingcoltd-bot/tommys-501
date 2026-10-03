@@ -7,7 +7,7 @@ One line each. "Spec" = the build prompt.
 - FastAPI + Jinja2 + HTMX + Tailwind (CDN) instead of Next.js: one process, one container, far simpler for a solo phone-first user; spec allowed it.
 - APScheduler (in-process, single worker thread) instead of Celery+Redis: fewer moving parts; the single worker also keeps the browser helper strictly sequential.
 - SQLite by default locally, Postgres in docker compose. Alembic migration `fc9200b125eb` is the initial schema; `create_all` also runs at startup so a fresh SQLite works without alembic.
-- Tailwind is loaded from the CDN with an inline CSS fallback so the dashboard is still readable offline.
+- No CSS framework: one hand-written stylesheet (`app/web/static/app.css`) in a Revolut-style idiom (balance hero, bottom tab bar on phones / sidebar on desktop, transaction-style rows, chip filters, automatic dark mode). No CDN dependency, so it looks the same offline.
 - Claude model default `claude-opus-5-5` (configurable via `CLAUDE_MODEL`). Prompts are plain Markdown files in `/prompts` with `{{var}}` placeholders and a version suffix.
 - The Claude client asks for a single JSON object and parses it tolerantly rather than using structured-output features, to stay robust across SDK versions.
 

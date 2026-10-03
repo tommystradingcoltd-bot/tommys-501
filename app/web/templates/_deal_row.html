@@ -1,0 +1,15 @@
+{% set risk = d.item.risk_flags|length %}
+{% set av = 'green' if d.score >= 60 else ('red' if d.breakdown.get('rule_reason','').startswith('blocked') or (not d.should_alert and d.net_profit < 0) else ('amber' if d.check_manually or risk else '')) %}
+<a href="/deals/{{ d.id }}" class="row">
+  <div class="av {{ av }}">{{ {'ebay':'eB','vinted':'Vi','facebook':'FB','gumtree':'GT','shpock':'Sh','depop':'De','paid_feed':'PF'}.get(d.raw_listing.source.slug, d.raw_listing.source.slug[:2]|upper) }}</div>
+  <div class="body">
+    <div class="t">{% if d.item.title != 'bundle' %}{{ d.item.platform }} {{ d.item.title }}{% else %}{{ d.raw_listing.title[:60] }}{% endif %}</div>
+    <div class="s">£{{ d.buy_price|round|int }}{% if d.raw_listing.listing_type == 'auction' %} bid{% endif %} → ~£{{ d.expected_sale_price|round|int }} · {{ d.est_days_to_sell }}d
+      {% if d.collection_only %} · {{ d.distance_miles|round|int if d.distance_miles is not none else '?' }} mi{% endif %}
+      {% if d.check_manually %} · <span class="pill pill-amber">check</span>{% endif %}
+      {% if risk %} · <span class="pill {{ 'pill-red' if d.item.risk_flags[0].severity == 'high' else 'pill-amber' }}">{{ d.item.risk_flags[0].label[:22] }}</span>{% endif %}
+      {% if d.status not in ('new','alerted') %} · <span class="pill pill-grey">{{ d.status }}</span>{% endif %}
+    </div>
+  </div>
+  <div class="amt"><b class="{{ 'pos' if d.net_profit > 0 else 'neg' }}">{{ ('+' if d.net_profit > 0 else '') ~ (d.net_profit|money) }}</b><span>{{ d.net_margin|pct }} · score {{ d.score|round|int }}</span></div>
+</a>

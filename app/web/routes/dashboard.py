@@ -33,6 +33,11 @@ def home(request: Request, db: Session = Depends(get_db)):
     })
 
 
+@router.get("/more", response_class=HTMLResponse)
+def more(request: Request):
+    return templates.TemplateResponse(request, "more.html", {})
+
+
 @router.get("/health", response_class=HTMLResponse)
 def health(request: Request, db: Session = Depends(get_db)):
     sources = db.scalars(select(Source).order_by(Source.kind, Source.name)).all()

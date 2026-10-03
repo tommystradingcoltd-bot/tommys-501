@@ -1,5 +1,5 @@
-{% extends "base.html" %}{% block title %}Projections - DealFinder{% endblock %}{% block content %}
-<h1 class="text-lg font-bold">Capital growth projection</h1>
+{% extends "base.html" %}{% block title %}Projections - DealFinder{% endblock %}{% block back %}/more{% endblock %}{% block page_title %}Projections{% endblock %}{% block content %}
+
 <form method="get" class="card grid grid-cols-2 md:grid-cols-3 gap-2 items-end text-sm">
   <label>Net margin % (blank = realised {{ inp.net_margin|pct }})<input name="margin" type="number" step="0.1" placeholder="{{ (inp.net_margin*100)|round(1) }}"></label>
   <label>Avg days to sell (blank = realised {{ inp.avg_days_to_sell }})<input name="days" type="number" step="1" placeholder="{{ inp.avg_days_to_sell }}"></label>

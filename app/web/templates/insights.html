@@ -1,5 +1,5 @@
-{% extends "base.html" %}{% block title %}Growth tips - DealFinder{% endblock %}{% block content %}
-<div class="flex items-center justify-between"><h1 class="text-lg font-bold">Weekly growth tips</h1><form method="post" action="/insights/generate"><button class="btn btn-primary">Generate now</button></form></div>
+{% extends "base.html" %}{% block title %}Growth tips - DealFinder{% endblock %}{% block back %}/more{% endblock %}{% block page_title %}Growth tips{% endblock %}{% block content %}
+<div class="flex items-center justify-between"><form method="post" action="/insights/generate"><button class="btn btn-primary">Generate now</button></form></div>
 {% for i in insights %}
 <div class="card">
   <div class="text-xs text-gray-500 mb-1">{{ i.period_start|dt('%d %b') }} – {{ i.period_end|dt('%d %b %Y') }} {% if i.ready_to_clone %}<span class="pill pill-green">READY TO CLONE INTO A SECOND NICHE</span>{% else %}<span class="pill pill-grey">not yet ready to clone</span>{% endif %}</div>

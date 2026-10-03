@@ -1,16 +1,15 @@
-{% extends "base.html" %}{% block title %}P&L - DealFinder{% endblock %}{% block content %}
-<div class="flex items-center justify-between flex-wrap gap-2"><h1 class="text-lg font-bold">P&amp;L (last {{ months }} months)</h1>
-  <div class="flex gap-1 text-sm">{% for m in [1,3,6,12] %}<a href="/pnl?months={{ m }}" class="btn {{ 'btn-primary' if m == months else 'btn-grey' }}">{{ m }}m</a>{% endfor %}</div></div>
-<div class="grid md:grid-cols-4 gap-3">
-  <div class="card"><div class="text-xs text-gray-500">Sales compared</div><div class="text-2xl font-bold">{{ accuracy.count }}</div></div>
-  <div class="card"><div class="text-xs text-gray-500">Mean profit error (actual - predicted)</div><div class="text-2xl font-bold">{{ accuracy.mean_profit_error|money if accuracy.count else '-' }}</div><div class="text-xs text-gray-500">abs {{ accuracy.mean_abs_profit_error|money if accuracy.count else '-' }}</div></div>
-  <div class="card"><div class="text-xs text-gray-500">Mean days error</div><div class="text-2xl font-bold">{{ accuracy.mean_days_error if accuracy.count else '-' }}</div></div>
-  <div class="card"><div class="text-xs text-gray-500">Within 20% of predicted</div><div class="text-2xl font-bold">{{ accuracy.within_20pct|pct if accuracy.count else '-' }}</div></div>
+{% extends "base.html" %}{% block title %}P&L - DealFinder{% endblock %}{% block page_title %}P&amp;L{% endblock %}{% block content %}
+<div class="chips">{% for m in [1,3,6,12] %}<a href="/pnl?months={{ m }}" class="chip {{ 'on' if m == months }}">Last {{ m }} month{{ 's' if m > 1 }}</a>{% endfor %}</div>
+<div class="stats">
+  <div class="stat"><div class="l">Sales compared</div><div class="v">{{ accuracy.count }}</div></div>
+  <div class="stat"><div class="l">Profit error (actual − predicted)</div><div class="v">{{ accuracy.mean_profit_error|money if accuracy.count else '-' }}</div></div>
+  <div class="stat"><div class="l">Days error</div><div class="v">{{ accuracy.mean_days_error if accuracy.count else '-' }}</div></div>
+  <div class="stat"><div class="l">Within 20% of predicted</div><div class="v">{{ accuracy.within_20pct|pct if accuracy.count else '-' }}</div></div>
 </div>
 <div class="card text-sm">Listing-quality uplift: current {{ current_uplift|pct(1) }}; learned from your sales: {{ uplift|pct(1) if uplift is not none else 'need 5+ sales' }}.
   {% if uplift is not none %}<form method="post" action="/pnl/apply-uplift" class="inline"><button class="btn btn-grey">Apply learned uplift</button></form>{% endif %}</div>
-<div class="card"><h2 class="font-semibold mb-2">By month</h2>{% with rows=by_month, label='Month' %}{% include "_pnl_table.html" %}{% endwith %}</div>
-<div class="card"><h2 class="font-semibold mb-2">By source (where I bought)</h2>{% with rows=by_source, label='Source' %}{% include "_pnl_table.html" %}{% endwith %}</div>
-<div class="card"><h2 class="font-semibold mb-2">By selling platform</h2>{% with rows=by_platform, label='Platform' %}{% include "_pnl_table.html" %}{% endwith %}</div>
+<div class="card overflow-x-auto"><h2 class="mb-2">By month</h2>{% with rows=by_month, label='Month' %}{% include "_pnl_table.html" %}{% endwith %}</div>
+<div class="card overflow-x-auto"><h2 class="mb-2">By source (where I bought)</h2>{% with rows=by_source, label='Source' %}{% include "_pnl_table.html" %}{% endwith %}</div>
+<div class="card overflow-x-auto"><h2 class="mb-2">By selling platform</h2>{% with rows=by_platform, label='Platform' %}{% include "_pnl_table.html" %}{% endwith %}</div>
 <div class="card overflow-x-auto"><h2 class="font-semibold mb-2">By item</h2>{% with rows=by_item, label='Item' %}{% include "_pnl_table.html" %}{% endwith %}</div>
 {% endblock %}
