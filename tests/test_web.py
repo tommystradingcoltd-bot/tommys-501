@@ -75,3 +75,12 @@ def test_create_niche_and_upload_sold_csv(client, db):
     r = client.post("/sold-data/upload", data={"niche_id": str(n.id), "default_platform": "SNES"},
                     files={"file": ("comps.csv", "title,sold_price,sold_at\nLego 8880,120,2026-09-01\n", "text/csv")}, follow_redirects=False)
     assert "Imported+1" in r.headers["location"]
+
+
+def test_walkthrough_flag_and_routes(client, db):
+    assert b'data-tour="on"' in client.get("/").content
+    assert client.post("/walkthrough/done").json() == {"ok": True}
+    assert b'data-tour="off"' in client.get("/").content
+    r = client.post("/walkthrough/restart", follow_redirects=False)
+    assert r.status_code == 303 and b'data-tour="on"' in client.get("/").content
+    assert client.get("/static/tour.js").status_code == 200

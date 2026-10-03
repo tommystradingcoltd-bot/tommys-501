@@ -72,3 +72,6 @@ One line each. "Spec" = the build prompt.
 - 50 listings across six sources: 5 alert, ~20 are deliberately bad buys, 3 fakes/repros, 1 stock photo, 1 stolen-goods wording, 11 bundles/job lots, 8 collection-only at varying distances from Manchester, 2 auctions ending soon, 1 NTSC import.
 - `MARKET` in `app/seed.py` is a hand-written approximation of UK PAL sold medians purely for the demo; real comps replace it.
 - On first start in mock mode a small backdated demo history (purchases and sales) is created so P&L/accuracy pages aren't empty. It is marked in settings (`demo_history_loaded`) and never re-created.
+
+## Onboarding
+- First-run walkthrough is vanilla JS (`app/web/static/tour.js`): a spotlight overlay with 13 steps spanning five pages; progress in sessionStorage, completion stored server-side (`walkthrough_done` setting) so it shows once per install, replayable from More. Skip counts as done.

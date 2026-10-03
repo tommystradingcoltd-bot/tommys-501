@@ -50,7 +50,7 @@ cp .env.example .env          # optional; defaults run in mock mode
 docker compose up --build
 ```
 
-Open http://localhost:8000. Postgres, a self-hosted ntfy server (port 8080) and the app start together. With
+Open http://localhost:8000. A 13-step walkthrough starts on first open and clicks you through Home, Deals, a deal page, Stock and More until you press "I understand the basics" (replay it from More). Postgres, a self-hosted ntfy server (port 8080) and the app start together. With
 `MOCK_MODE=true` (the default) it loads 50 realistic seed listings, prices them, alerts (to the log), and creates a
 little demo stock history so every page has data.
 

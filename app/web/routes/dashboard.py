@@ -33,6 +33,20 @@ def home(request: Request, db: Session = Depends(get_db)):
     })
 
 
+@router.post("/walkthrough/done")
+def walkthrough_done(db: Session = Depends(get_db)):
+    from app.settings_store import set_setting
+    set_setting(db, "walkthrough_done", True)
+    return {"ok": True}
+
+
+@router.post("/walkthrough/restart")
+def walkthrough_restart(db: Session = Depends(get_db)):
+    from app.settings_store import set_setting
+    set_setting(db, "walkthrough_done", False)
+    return RedirectResponse("/", status_code=303)
+
+
 @router.get("/more", response_class=HTMLResponse)
 def more(request: Request):
     return templates.TemplateResponse(request, "more.html", {})

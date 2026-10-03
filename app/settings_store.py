@@ -42,6 +42,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "clone_rule": {"months": 3, "min_margin": 0.30, "max_avg_days": 30},
     "monthly_buying_capacity": 4000.0,     # £ of stock one person can buy/test/list per month (projections cap)
     "demo_history_loaded": False,
+    "walkthrough_done": False,
 }
 
 # key, group, label, value, unit, notes

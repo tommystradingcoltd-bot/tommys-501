@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% block title %}Stock - DealFinder{% endblock %}{% block page_title %}Stock{% endblock %}
 {% block topbar_right %}<a href="/inventory/export.csv" class="btn btn-grey btn-sm">Export CSV</a>{% endblock %}{% block content %}
 {% set active = request.query_params.get('status', 'active') %}
-<div class="chips">
+<div class="chips" data-tour="chips">
   <a href="/inventory?status=active" class="chip {{ 'on' if active == 'active' }}">Active ({{ columns.in_transit|length + columns.testing|length + columns.ready_to_photograph|length + columns.listed|length }})</a>
   {% for s, items in columns.items() %}<a href="/inventory?status={{ s }}" class="chip {{ 'on' if active == s }}">{{ s.replace('_',' ')|capitalize }} ({{ items|length }})</a>{% endfor %}
 </div>

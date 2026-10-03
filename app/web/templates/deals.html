@@ -1,4 +1,5 @@
 {% extends "base.html" %}{% block title %}Deals - DealFinder{% endblock %}{% block page_title %}Deals{% endblock %}{% block content %}
+<div data-tour="chips">
 {% set base = '/deals?status=' ~ status ~ ('&show_all=1' if show_all else '') %}
 <div class="chips">
   <a href="{{ base }}&sort={{ sort }}" class="chip {{ 'on' if not source }}">All sources</a>
@@ -11,6 +12,7 @@
   {% for k, l in [('open','Open'),('watching','Watching'),('bought','Bought'),('passed','Passed'),('expired','Expired'),('all','Everything')] %}<a href="/deals?status={{ k }}&sort={{ sort }}&source={{ source }}{{ '&show_all=1' if show_all }}" class="chip {{ 'on' if status == k }}">{{ l }}</a>{% endfor %}
   <a href="/deals?status={{ status }}&sort={{ sort }}&source={{ source }}{{ '' if show_all else '&show_all=1' }}" class="chip {{ 'on' if show_all }}">{{ 'Hiding non-alerts' if not show_all else 'Showing non-alerts' }}</a>
 </div>
+</div>
 <details class="card" style="padding:10px 16px"><summary class="text-sm font-semibold cursor-pointer">More filters</summary>
 <form method="get" class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 items-end text-sm">
   <input type="hidden" name="sort" value="{{ sort }}"><input type="hidden" name="source" value="{{ source }}"><input type="hidden" name="status" value="{{ status }}">{% if show_all %}<input type="hidden" name="show_all" value="1">{% endif %}
@@ -20,5 +22,5 @@
   <button class="btn btn-primary">Apply</button>
 </form></details>
 <div class="section"><h2>{{ deals|length }} deals</h2></div>
-<div class="card flush">{% for d in deals %}{% include "_deal_row.html" %}{% else %}<div class="row"><div class="body muted">Nothing matches these filters.</div></div>{% endfor %}</div>
+<div class="card flush" data-tour="deals">{% for d in deals %}{% include "_deal_row.html" %}{% else %}<div class="row"><div class="body muted">Nothing matches these filters.</div></div>{% endfor %}</div>
 {% endblock %}

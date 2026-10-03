@@ -48,5 +48,16 @@ def ago(v) -> str:
     return f"{s // 86400}d ago"
 
 
+def tour_pending() -> bool:
+    """True until the user finishes (or skips) the first-run walkthrough."""
+    try:
+        from app.db import db_session
+        from app.settings_store import get_setting
+        with db_session() as db:
+            return not bool(get_setting(db, "walkthrough_done", False))
+    except Exception:  # pragma: no cover - never break a page over this
+        return False
+
+
 templates.env.filters.update({"money": money, "pct": pct, "dt": dt, "ago": ago})
-templates.env.globals.update({"now": datetime.utcnow, "statuses": ["in_transit", "testing", "ready_to_photograph", "listed", "sold", "shipped", "returned"]})
+templates.env.globals.update({"now": datetime.utcnow, "tour_pending": tour_pending, "statuses": ["in_transit", "testing", "ready_to_photograph", "listed", "sold", "shipped", "returned"]})

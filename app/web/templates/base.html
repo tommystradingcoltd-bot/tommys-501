@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/static/app.css">
 <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
 </head>
-<body>
+<body data-tour="{{ 'on' if tour_pending() else 'off' }}">
 {% set p = request.url.path %}
 {% macro icon(name) -%}
 {% if name == 'home' %}<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg>
@@ -27,7 +27,7 @@
 {% elif name == 'back' %}<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
 {% endif %}
 {%- endmacro %}
-<nav class="tabbar">
+<nav class="tabbar" data-tour="tabbar">
   <a class="brand" href="/">DealFinder</a>
   <a href="/" class="{{ 'active' if p == '/' }}">{{ icon('home') }}Home</a>
   <a href="/deals" class="{{ 'active' if p.startswith('/deals') }}">{{ icon('deals') }}Deals</a>
@@ -43,5 +43,6 @@
 <main class="wrap space-y-3">
 {% block content %}{% endblock %}
 </main>
+<script src="/static/tour.js" defer></script>
 </body>
 </html>
